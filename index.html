@@ -1,0 +1,436 @@
+<!--
+Miguel Marchena - Personal Portfolio (Single-file HTML)
+Place this file as `index.html` in a GitHub Pages repository (username.github.io)
+
+Features:
+- Responsive layout (mobile / tablet / desktop)
+- Home / Projects / About / Skills / Contact sections
+- Dark mode toggle
+- Smooth transitions and hover effects
+- Commented sections for easy customization (search for "CUSTOMIZE")
+- Contact form uses mailto fallback. Instructions below show how to enable Formspree.
+
+Setup instructions (also present inside comments at the top of this file):
+1) Create a repository named EXACTLY: `<your-github-username>.github.io`.
+2) Put this `index.html` in the repository root. Push to GitHub.
+3) Visit https://<your-github-username>.github.io after the push completes.
+
+Optional - enable form submissions with Formspree / Getform:
+- Sign up at https://formspree.io (or similar service).
+- Create a new form and replace the `action` attribute on the <form id="contact-form"> below with the provided endpoint.
+- For Formspree you'll typically use: action="https://formspree.io/f/yourFormID" method="POST"
+
+Notes:
+- Replace placeholder images, links, and text where commented with "CUSTOMIZE".
+- For resume link, put resume.pdf in the repository root and update the link.
+- If you prefer separate files (styles.js etc.), split this file accordingly.
+
+Enjoy! — Miguel's portfolio starter
+--> 
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Miguel Marchena — Game Developer</title>
+  <meta name="description" content="Miguel Marchena — game developer. C++, C#, Java. Projects in Unity, Unreal, Qt.">
+  <meta name="author" content="Miguel Marchena">
+
+  <!-- Favicon (replace or keep) -->
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
+  <style>
+    /* =========================
+       VARIABLES & BASE
+       ========================= */
+    :root{
+      --bg:#0b0f14;
+      --card:#0f1720;
+      --muted:#98a0ad;
+      --accent:#7c5cff;
+      --glass: rgba(255,255,255,0.03);
+      --radius:12px;
+      --ff: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    [data-theme="light"]{
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --muted: #56606f;
+      --accent: #5b6cff;
+      --glass: rgba(0,0,0,0.03);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%;}
+    body{
+      margin:0;background:var(--bg);color: #e6eef6;font-family:var(--ff);-webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;line-height:1.5;font-size:16px;
+      transition:background .3s, color .3s;
+    }
+
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+
+    /* =========================
+       LAYOUT
+       ========================= */
+    .container{max-width:1100px;margin:0 auto;padding:2rem}
+    header{position:sticky;top:12px;z-index:40}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0}
+    .brand{display:flex;gap:.75rem;align-items:center}
+    .logo{width:44px;height:44px;background:linear-gradient(135deg,var(--accent),#50e3c2);border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:700}
+    .nav-links{display:flex;gap:1rem;align-items:center}
+    .nav-links a{padding:.5rem .75rem;border-radius:10px;color:var(--muted);font-weight:600}
+    .nav-links a:hover{color:var(--accent);background:var(--glass)}
+
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:2rem;align-items:center;padding:3rem 0}
+    .hero .intro{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:2rem;border-radius:var(--radius);backdrop-filter: blur(6px)}
+    h1{font-size:clamp(1.6rem,2.6vw,2.4rem);margin:.25rem 0}
+    .lead{color:var(--muted);margin-top:0.5rem}
+
+    /* subtle gaming background */
+    .bg-canvas{position:fixed;right:0;left:0;top:0;bottom:0;z-index:-1;pointer-events:none;opacity:.12}
+
+    /* projects grid */
+    .projects{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}
+    .card{background:var(--card);padding:1rem;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.6);overflow:hidden;border:1px solid rgba(255,255,255,0.02);transition:transform .25s ease, box-shadow .25s}
+    .card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(2,6,23,0.7)}
+    .thumb{height:160px;background:#0a0c0f;border-radius:10px;overflow:hidden;margin-bottom:.75rem;display:grid;place-items:center}
+    .tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.5rem}
+    .tag{background:rgba(0,0,0,0.25);padding:.25rem .5rem;border-radius:8px;font-size:.75rem;color:var(--muted)}
+
+    /* about & skills */
+    .two-col{display:grid;grid-template-columns:1fr 320px;gap:1rem}
+    .bio p{color:var(--muted)}
+
+    .skill{margin-bottom:.6rem}
+    .skill .meta{display:flex;justify-content:space-between;font-size:.85rem;color:var(--muted)}
+    .bar{height:10px;background:rgba(255,255,255,0.06);border-radius:999px;margin-top:.4rem;overflow:hidden}
+    .bar > i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),#50e3c2);width:60%}
+
+    /* contact */
+    .contact-card{padding:1rem;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent)}
+    .btn{display:inline-flex;gap:.6rem;align-items:center;padding:.6rem .9rem;border-radius:10px;background:var(--accent);color:white;font-weight:700;border:none;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+
+    footer{padding:2rem 0;color:var(--muted);text-align:center}
+
+    /* responsive */
+    @media (max-width:980px){
+      .hero{grid-template-columns:1fr}
+      .two-col{grid-template-columns:1fr}
+      .nav-links{display:none}
+    }
+
+    @media (max-width:560px){
+      .container{padding:1rem}
+      .thumb{height:120px}
+    }
+
+    /* small interactive touches */
+    .socials{display:flex;gap:.5rem}
+    .socials a{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:8px;background:rgba(255,255,255,0.02)}
+
+    /* focus states */
+    a:focus,button:focus,input:focus,textarea:focus{outline:3px solid rgba(124,92,255,0.14);outline-offset:2px}
+
+  </style>
+</head>
+<body data-theme="dark">
+
+  <!-- Background canvas - pixelated / lowpoly style (subtle) -->
+  <svg class="bg-canvas" width="100%" height="100%" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden>
+    <defs>
+      <linearGradient id="g1" x1="0" x2="1">
+        <stop offset="0%" stop-color="#071226" />
+        <stop offset="100%" stop-color="#071226" stop-opacity="0" />
+      </linearGradient>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#g1)" />
+    <!-- Controller icon / simple pattern -->
+    <g transform="translate(20,20) scale(0.45)" fill="none" stroke="white" stroke-opacity="0.06">
+      <rect x="10" y="20" width="120" height="80" rx="16"></rect>
+      <circle cx="40" cy="60" r="8"></circle>
+      <circle cx="80" cy="60" r="6"></circle>
+    </g>
+  </svg>
+
+  <div class="container">
+    <header>
+      <nav class="nav" aria-label="Main navigation">
+        <div class="brand">
+          <div class="logo">MM</div>
+          <div>
+            <div style="font-weight:800">Miguel Marchena</div>
+            <div style="font-size:.82rem;color:var(--muted)">Game Developer</div>
+          </div>
+        </div>
+
+        <div class="nav-links" id="nav-links">
+          <a href="#home">Home</a>
+          <a href="#projects">Projects</a>
+          <a href="#about">About</a>
+          <a href="#skills">Skills</a>
+          <a href="#contact">Contact</a>
+        </div>
+
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <button id="theme-toggle" class="btn ghost" aria-label="Toggle dark mode">Toggle</button>
+          <button id="menu-toggle" class="btn ghost" aria-label="Open menu" style="display:none">Menu</button>
+        </div>
+      </nav>
+    </header>
+
+    <!-- HERO / Landing -->
+    <main id="home" class="hero">
+      <section class="intro">
+        <p style="color:var(--muted);font-weight:700">Hi there — welcome 👋</p>
+        <h1>Hi, I’m Miguel Marchena, a game developer passionate about C++, C#, and Java.</h1>
+        <p class="lead">I build gameplay systems, tools, and apps with a focus on performance and clean architecture. I enjoy solving problems with code and shipping playable experiences.</p>
+
+        <div style="display:flex;gap:0.6rem;margin-top:1rem;align-items:center">
+          <!-- CUSTOMIZE: Replace links -->
+          <a class="btn" href="https://github.com/YOUR_USERNAME" target="_blank" rel="noopener">GitHub</a>
+          <a class="btn ghost" href="https://www.linkedin.com/in/YOUR_LINKEDIN" target="_blank" rel="noopener">LinkedIn</a>
+          <a class="btn ghost" href="mailto:youremail@example.com">Email</a>
+        </div>
+
+        <div style="margin-top:1.2rem;color:var(--muted)">
+          <strong>Looking for:</strong> Gameplay systems, engine tooling, native performance, cross-platform optimization.
+        </div>
+      </section>
+
+      <!-- right column - featured image / animation -->
+      <aside style="display:grid;place-items:center">
+        <div style="width:100%;max-width:420px;border-radius:14px;overflow:hidden;box-shadow:0 12px 30px rgba(2,6,23,0.6)">
+          <!-- CUSTOMIZE: Replace with a gameplay GIF or image -->
+          <div style="background:linear-gradient(180deg,#0b1220,#081018);padding:2rem;display:grid;place-items:center;min-height:260px">
+            <svg width="160" height="160" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <rect x="2" y="5" width="20" height="14" rx="3" stroke="#7c5cff" stroke-width="1.2" />
+              <circle cx="8.5" cy="12.5" r="2.2" fill="#7c5cff" />
+              <rect x="14.2" y="10.2" width="4" height="1" rx="0.5" fill="#7c5cff" />
+            </svg>
+            <div style="color:var(--muted);margin-top:1rem">Gameplay preview (replace with GIF)</div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- PROJECTS -->
+    <section id="projects" style="padding:2rem 0">
+      <h2 style="margin-bottom:1rem">Projects</h2>
+      <div class="projects" aria-live="polite">
+
+        <!-- PROJECT CARD TEMPLATE - CUSTOMIZE per project -->
+        <article class="card">
+          <div class="thumb">
+            <!-- replace src with a thumbnail or gif -->
+            <img src="https://via.placeholder.com/600x360.png?text=Game+Thumbnail" alt="Project thumbnail">
+          </div>
+          <h3 style="margin:0">Project Title — Action Roguelike</h3>
+          <p style="color:var(--muted);margin:.5rem 0 .25rem">A fast-paced action roguelike built with Unity featuring procedural levels and responsive controls.</p>
+          <div class="tags">
+            <span class="tag">Unity</span>
+            <span class="tag">C#</span>
+            <span class="tag">Gameplay</span>
+          </div>
+          <div style="margin-top:.8rem;display:flex;gap:.6rem">
+            <a class="btn" href="https://github.com/YOUR_USERNAME/project-repo" target="_blank" rel="noopener">Repo</a>
+            <a class="btn ghost" href="#" target="_blank">Demo</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="thumb">
+            <img src="https://via.placeholder.com/600x360.png?text=Game+Thumbnail2" alt="Project thumbnail">
+          </div>
+          <h3 style="margin:0">Teacher Scheduler App</h3>
+          <p style="color:var(--muted);margin:.5rem 0 .25rem">A scheduling tool for teachers built in Java that optimizes room and time assignments.</p>
+          <div class="tags">
+            <span class="tag">Java</span>
+            <span class="tag">Algorithms</span>
+            <span class="tag">UI</span>
+          </div>
+          <div style="margin-top:.8rem;display:flex;gap:.6rem">
+            <a class="btn" href="https://github.com/YOUR_USERNAME/teacher-scheduler" target="_blank">Repo</a>
+            <a class="btn ghost" href="#">More</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="thumb">
+            <img src="https://via.placeholder.com/600x360.png?text=Qt+App" alt="Project thumbnail">
+          </div>
+          <h3 style="margin:0">Finance Tracker</h3>
+          <p style="color:var(--muted);margin:.5rem 0 .25rem">A desktop finance tracker using Qt + SQLite, focused on small-business budgets and reporting.</p>
+          <div class="tags">
+            <span class="tag">Qt</span>
+            <span class="tag">C++</span>
+            <span class="tag">SQLite</span>
+          </div>
+          <div style="margin-top:.8rem;display:flex;gap:.6rem">
+            <a class="btn" href="https://github.com/YOUR_USERNAME/finance-tracker" target="_blank">Repo</a>
+            <a class="btn ghost" href="#">Download</a>
+          </div>
+        </article>
+
+        <!-- Add more project cards as needed. Copy/paste the template. -->
+
+      </div>
+    </section>
+
+    <!-- ABOUT & SKILLS -->
+    <section id="about" style="padding:2rem 0">
+      <h2>About Me</h2>
+      <div class="two-col">
+        <div class="bio card" style="padding:1rem">
+          <p><strong>I'm Miguel —</strong> I hold a Computer Science degree with a focus on game and systems development. I enjoy writing efficient C++ systems, tooling in C#, and building cross-platform utilities in Java.</p>
+          <p style="color:var(--muted)">Example projects include a <em>teacher scheduling app</em> (Java) that demonstrates algorithmic problem solving and constraint satisfaction, and a <em>finance tracker</em> (Qt + SQLite) built with portability and user-focused reporting in mind.</p>
+          <p style="color:var(--muted)">I'm available for collaboration on gameplay systems, tools, and engine-level improvements.</p>
+        </div>
+
+        <aside class="card" style="padding:1rem">
+          <h3 style="margin-top:0">Skills</h3>
+          <div class="skill">
+            <div class="meta"><span>C++</span><span>90%</span></div>
+            <div class="bar"><i style="width:90%"></i></div>
+          </div>
+          <div class="skill">
+            <div class="meta"><span>C#</span><span>85%</span></div>
+            <div class="bar"><i style="width:85%"></i></div>
+          </div>
+          <div class="skill">
+            <div class="meta"><span>Java</span><span>80%</span></div>
+            <div class="bar"><i style="width:80%"></i></div>
+          </div>
+          <div class="skill">
+            <div class="meta"><span>Unity</span><span>80%</span></div>
+            <div class="bar"><i style="width:80%"></i></div>
+          </div>
+          <div class="skill">
+            <div class="meta"><span>Unreal Engine</span><span>70%</span></div>
+            <div class="bar"><i style="width:70%"></i></div>
+          </div>
+          <div class="skill">
+            <div class="meta"><span>Qt</span><span>75%</span></div>
+            <div class="bar"><i style="width:75%"></i></div>
+          </div>
+          <div class="skill">
+            <div class="meta"><span>Git / GitHub</span><span>85%</span></div>
+            <div class="bar"><i style="width:85%"></i></div>
+          </div>
+
+          <h4 style="margin-top:1rem">Soft skills</h4>
+          <ul style="color:var(--muted);padding-left:1.1rem">
+            <li>Problem-solving</li>
+            <li>Adaptability</li>
+            <li>Creativity</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" style="padding:2rem 0">
+      <h2>Contact</h2>
+      <div class="two-col">
+        <form id="contact-form" class="contact-card card" action="" method="GET" onsubmit="return handleContact(event)">
+          <!-- Note: For serverless hosting (GitHub Pages) you need a 3rd-party form provider if you want POST handling. See top comments. -->
+          <label style="display:block;margin-bottom:.5rem">Name</label>
+          <input name="name" required placeholder="Your name" style="width:100%;padding:.6rem;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit">
+
+          <label style="display:block;margin: .6rem 0 .2rem">Email</label>
+          <input name="email" type="email" required placeholder="you@example.com" style="width:100%;padding:.6rem;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit">
+
+          <label style="display:block;margin: .6rem 0 .2rem">Message</label>
+          <textarea name="message" rows="6" required placeholder="Say hi or tell me about your project" style="width:100%;padding:.6rem;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit"></textarea>
+
+          <div style="display:flex;gap:.6rem;margin-top:.8rem;align-items:center">
+            <button type="submit" class="btn">Send</button>
+            <a class="btn ghost" href="mailto:youremail@example.com?subject=Contact%20from%20Portfolio">Email me</a>
+            <!-- CUSTOMIZE: resume.pdf should be added to repository root -->
+            <a class="btn ghost" href="resume.pdf" download>Resume</a>
+          </div>
+
+          <p style="color:var(--muted);margin-top:.6rem;font-size:.9rem">Prefer direct email? <a href="mailto:youremail@example.com">youremail@example.com</a></p>
+        </form>
+
+        <aside style="align-self:start" class="card contact-card">
+          <h3 style="margin-top:0">Let's build something great together!</h3>
+          <p style="color:var(--muted)">I'm open to collaborations on gameplay systems, engine tools, and desktop apps.</p>
+
+          <div style="margin-top:1rem;display:flex;gap:.5rem;flex-wrap:wrap">
+            <a class="btn" href="https://github.com/YOUR_USERNAME" target="_blank">GitHub</a>
+            <a class="btn ghost" href="https://www.linkedin.com/in/YOUR_LINKEDIN" target="_blank">LinkedIn</a>
+            <a class="btn ghost" href="mailto:youremail@example.com">Email</a>
+          </div>
+
+          <hr style="border:none;height:1px;background:rgba(255,255,255,0.03);margin:1rem 0">
+          <p style="color:var(--muted);font-size:.95rem">If you want more details about my projects, include a link to code or a playable demo and I'll follow up.</p>
+        </aside>
+      </div>
+    </section>
+
+    <footer>
+      <div style="display:flex;gap:1rem;justify-content:center;align-items:center;flex-wrap:wrap">
+        <div class="socials">
+          <!-- CUSTOMIZE: Replace links with your profiles -->
+          <a href="https://github.com/YOUR_USERNAME" target="_blank" aria-label="GitHub">GH</a>
+          <a href="https://www.linkedin.com/in/YOUR_LINKEDIN" target="_blank" aria-label="LinkedIn">IN</a>
+        </div>
+        <div style="color:var(--muted)">© <span id="year"></span> Miguel Marchena — Built with ❤️</div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    /* =========================
+       SCRIPT: interactivity
+       ========================= */
+    const themeToggle = document.getElementById('theme-toggle');
+    const root = document.documentElement;
+    const year = document.getElementById('year');
+    year.textContent = new Date().getFullYear();
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme');
+    if(savedTheme) document.body.setAttribute('data-theme', savedTheme);
+
+    themeToggle.addEventListener('click', ()=>{
+      const current = document.body.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.body.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
+
+    // Smooth anchor scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const id = a.getAttribute('href').slice(1);
+        const el = document.getElementById(id);
+        if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+      });
+    });
+
+    // Contact form handler - mailto fallback
+    function handleContact(e){
+      e.preventDefault();
+      const f = e.target;
+      const name = encodeURIComponent(f.name.value.trim());
+      const email = encodeURIComponent(f.email.value.trim());
+      const message = encodeURIComponent(f.message.value.trim());
+      // CUSTOMIZE: replace youremail@example.com with your real email
+      const to = 'youremail@example.com';
+      const subject = `Portfolio contact from ${name}`;
+      const body = `Name: ${name}%0D%0AEmail: ${email}%0D%0A%0D%0A${message}`;
+
+      // Open user's email client as fallback
+      window.location.href = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${body}`;
+      return false; // don't actually submit
+    }
+
+  </script>
+</body>
+</html>
