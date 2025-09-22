@@ -1,32 +1,3 @@
-<!--
-Miguel Marchena - Personal Portfolio (Single-file HTML)
-Place this file as `index.html` in a GitHub Pages repository (username.github.io)
-
-Features:
-- Responsive layout (mobile / tablet / desktop)
-- Home / Projects / About / Skills / Contact sections
-- Dark mode toggle
-- Smooth transitions and hover effects
-- Commented sections for easy customization (search for "CUSTOMIZE")
-- Contact form uses mailto fallback. Instructions below show how to enable Formspree.
-
-Setup instructions (also present inside comments at the top of this file):
-1) Create a repository named EXACTLY: `<your-github-username>.github.io`.
-2) Put this `index.html` in the repository root. Push to GitHub.
-3) Visit https://<your-github-username>.github.io after the push completes.
-
-Optional - enable form submissions with Formspree / Getform:
-- Sign up at https://formspree.io (or similar service).
-- Create a new form and replace the `action` attribute on the <form id="contact-form"> below with the provided endpoint.
-- For Formspree you'll typically use: action="https://formspree.io/f/yourFormID" method="POST"
-
-Notes:
-- Replace placeholder images, links, and text where commented with "CUSTOMIZE".
-- For resume link, put resume.pdf in the repository root and update the link.
-- If you prefer separate files (styles.js etc.), split this file accordingly.
-
-Enjoy! — Miguel's portfolio starter
---> 
 
 <!doctype html>
 <html lang="en">
@@ -421,8 +392,8 @@ Enjoy! — Miguel's portfolio starter
       const name = encodeURIComponent(f.name.value.trim());
       const email = encodeURIComponent(f.email.value.trim());
       const message = encodeURIComponent(f.message.value.trim());
-      // CUSTOMIZE: replace youremail@example.com with your real email
-      const to = 'youremail@example.com';
+     
+      const to = 'mmarchenar77@gmail.com';
       const subject = `Portfolio contact from ${name}`;
       const body = `Name: ${name}%0D%0AEmail: ${email}%0D%0A%0D%0A${message}`;
 
